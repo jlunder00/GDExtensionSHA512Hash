@@ -1,8 +1,8 @@
 #ifndef GDSHA512_H
 #define GDSHA512_H
 
-#include <godot.hpp>
-#include <ref.hpp>
+// #include <godot.hpp>
+// #include <ref.hpp>
 
 namespace godot {
 
