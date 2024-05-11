@@ -3,8 +3,6 @@ import os
 # Create a construction environment
 env = Environment()
 
-env = env.Clone()
-
 # Automatically set the correct suffix for shared libraries depending on the platform
 platform = ARGUMENTS.get('platform', 'linux')
 if platform == 'windows':
@@ -13,24 +11,39 @@ elif platform == 'osx':
     env['SHLIB_SUFFIX'] = '.dylib'
 else:
     env['SHLIB_SUFFIX'] = '.so'
-# Setup paths for the Godot headers and sources
-godot_cpp_path = 'godot-cpp'
-include_path = os.path.join(godot_cpp_path, 'include', 'godot_cpp')  # Corrected to include 'godot_cpp'
-include_core_path = os.path.join(include_path, 'core')
-include_gen_path = os.path.join(include_path, 'gen')  # Not needed in your specific case but included for completeness
-include_ref_path = os.path.join(include_path, 'classes')
-include_extensions_path = os.path.join(godot_cpp_path, 'gdextension')
-base_include = os.path.join(godot_cpp_path, 'include')
 
-# Configure environment paths
-env.Append(CPPPATH=[include_path, include_core_path, include_gen_path, include_extensions_path, include_ref_path, base_include])
-env.Append(LIBPATH=[os.path.join(godot_cpp_path, 'bin')])
-# env.Append(LIBS=['godot-cpp.linux.debug.64'])  # Modify this for your platform
-env.Append(LIBS=['godot-cpp.linux.template_debug.x86_64'])  # Correctly referencing the debug library file
+
+# # Assuming 'godot-cpp' is a sibling directory to your source directory
+# godot_cpp_path = '#godot-cpp'
+# include_path = os.path.join(godot_cpp_path, 'gen', 'include')
+# include_core_path = os.path.join(include_path, 'godot_cpp', 'core')
+# include_classes_path = os.path.join(include_path, 'godot_cpp', 'classes')
+# include_gdextension_path = os.path.join(godot_cpp_path, 'gdextension')
+
+# # Append all relevant paths to the include path
+# env.Append(CPPPATH=[include_path, include_core_path, include_classes_path, include_gdextension_path])
+
+# # Assuming the static library is in 'godot-cpp/bin'
+# env.Append(LIBPATH=[os.path.join(godot_cpp_path, 'bin')])
+# Set paths to the godot-cpp library
+env.Append(CPPPATH=[
+    'godot-cpp/gen/include',  # General include directory
+    'godot-cpp/gen/include/godot_cpp',  # Additional includes for godot_cpp specifics
+    'godot-cpp/gen/include/godot_cpp/classes',  # Class definitions
+    'godot-cpp/gen/include/godot_cpp/core',  # Core functionality
+    'godot-cpp/include',
+    'godot-cpp/include/godot_cpp',
+    'godot-cpp/include/godot_cpp/classes',
+    'godot-cpp/include/godot_cpp/core',
+    'godot-cpp/gdextension'
+])
+
+env.Append(LIBPATH=['#godot-cpp/bin'])
+env.Append(LIBS=['godot-cpp.linux.template_debug.x86_64', 'crypto'])
 
 # Source files
-src_files = ['src/gdsha512.cpp', 'src/register_types.cpp']
+sources = ['src/gdsha512.cpp']
 
 # Build the shared library
-target_name = 'libgdsha512' + env['SHLIB_SUFFIX']
-env.SharedLibrary(target=target_name, source=src_files)
+target_name = 'bin/libgdsha512' + env['SHLIB_SUFFIX']
+env.SharedLibrary(target=target_name, source=sources)
