@@ -8,6 +8,14 @@ void GDSha512::_bind_methods() {
     ClassDB::bind_method(D_METHOD("hash", "input"), &GDSha512::hash);
 }
 
+GDSha512::GDSha512(){
+  //constructor  
+}
+
+GDSha512::~GDSha512(){
+  //destructor
+}
+
 String GDSha512::hash(const String& input) {
     unsigned char output[SHA512_DIGEST_LENGTH]; // Output buffer for the hash
     EVP_MD_CTX* ctx = EVP_MD_CTX_new(); // Create a context for the hash operation
