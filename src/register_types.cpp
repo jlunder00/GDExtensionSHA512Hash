@@ -1,6 +1,9 @@
 #include "register_types.h"
 #include "gdsha512.h"
-#include <godot_cpp/core/class_db.hpp>
+
+#include <gdextension_interface.h>
+#include <godot_cpp/core/defs.hpp>
+#include <godot_cpp/godot.hpp>
 
 using namespace godot;
 
@@ -19,14 +22,14 @@ void uninitialize_gd_sha512_module(godot::ModuleInitializationLevel p_level) {
 extern "C" {
 
 // Initialization function.
-GD_EXTENSION_BOOL GD_EXTENSION_API gd_sha512_library_init(const GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization* r_initialization) {
-    GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
-    
-    init_obj.register_initializer(initialize_gd_sha512_module);
-    init_obj.register_terminator(uninitialize_gd_sha512_module);
-    init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
+GDExtensionBool GDE_EXPORT gd_sha512_library_init(const GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
+  godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
+  
+  init_obj.register_initializer(initialize_gd_sha512_module);
+  init_obj.register_terminator(uninitialize_gd_sha512_module);
+  init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
 
-    return init_obj.init();
+  return init_obj.init();
 }
 
 }
